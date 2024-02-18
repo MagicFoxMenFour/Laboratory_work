@@ -14,6 +14,8 @@ struct Product {
 };
 
 int main() {
+  setlocale(LC_ALL, "Russian");
+
   queue<Product> products;
 
   // Добавление нового товара
