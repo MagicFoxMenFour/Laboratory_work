@@ -10,43 +10,40 @@
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
+	
+	deque<int>q;
+	int n, x, D;
 
-    int n, x, D;
+	cout << "Введите размер очереди (не менее 2-х элементов): ";
+	cin >> n;
 
-    cout << "Введите размер массива (не менее 2-х элементов): ";
-    cin >> n;
+	for (int i = 0; i < n; i++) {
+		cout << endl << "Введите " << i + 1 << " элемент очереди: ";
+		cin >> x;
+		q.push_back(x);
+	}
 
-    int* arr = new int[n]; 
+	int* P1 = &q.front();
+	int* P2 = &q.back();
 
-    for (int i = 0; i < n; i++) {
-        cout << endl << "Введите " << i + 1 << " элемент массива: ";
-        cin >> x;
-        arr[i] = x;
-    }
+	cout << endl << "Введите число D: ";
+	cin >> D;
 
-    int* P1 = &arr[0];
-    int* P2 = &arr[n-1];
+	q.push_back(D);
+	q.pop_front();
 
-    cout << endl << "Введите число D: ";
-    cin >> D;
+	cout << endl << *P1 << endl;
 
-    // Сдвиг элементов массива влево,  имитируя очередь
-    for (int i = 0; i < n - 1; i++) {
-        arr[i] = arr[i + 1];
-    }
-    arr[n-1] = D; // Добавление D в конец 
 
-    cout << endl << *P1 << endl; // Вывод первого элемента
+	for (int i = 0; i < n; i++) {
+		cout << q.front() << " ";
+		q.pop_front();
+	}
 
-    for (int i = 0; i < n; i++) {
-        cout << arr[i] << " "; // Вывод всех элементов
-    }
-
-    delete[] arr; // Освобождение памяти
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Создать очередь, информационными полями которой являются: 
@@ -60,52 +57,48 @@ int main() {
 
 using namespace std;
 
-struct Processor {
-    string name;
-    string frequency;
-    int cores;
-};
-
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
+	
+	deque<string>processor;
+	int x;
+	string name, frequency, cores;
 
-    Processor* processors = nullptr; // Указатель на массив процессоров
-    int count = 0; // Количество процессоров
-    int x;
+	do {
+		cout << "Введите наименование процессора: " << endl;
+		cin >> name;
+		processor.push_back(name);
+		cout << "Введите тактовую частоту процессора (в гГц): " << endl;
+		cin >> frequency;
+		processor.push_back(frequency);
+		cout << "Введите количетсов ядер процессора: " << endl;
+		cin >> cores;
+		processor.push_back(cores);
+		
+		cout << "Добавить новый процессор (1) или завершить ввод (2)?" << endl;
+		cin >> x;
+	} while (x == 1);
 
-    do {
-        // Выделение памяти для нового процессора
-        Processor* temp = new Processor[count + 1];
-        for (int i = 0; i < count; i++) {
-            temp[i] = processors[i];
-        }
-        delete[] processors; 
-        processors = temp;
+	int size = processor.size();
 
-        cout << "Введите наименование процессора: " << endl;
-        cin >> processors[count].name;
-        cout << "Введите тактовую частоту процессора (в гГц): " << endl;
-        cin >> processors[count].frequency;
-        cout << "Введите количество ядер процессора: " << endl;
-        cin >> processors[count].cores;
+	for (int i = 1; i <= size; i++) {
+		
+		if ((i-1) % 3 == 0) {
+			cout << "Процессор №" << ((i - 1) / 3) + 1 << ": ";
+		}
 
-        count++;
+		cout << processor.front() << " ";
 
-        cout << "Добавить новый процессор (1) или завершить ввод (2)?" << endl;
-        cin >> x;
-    } while (x == 1);
+		if (i % 3 == 0) {
+			cout << endl;
+		}
 
-    for (int i = 0; i < count; i++) {
-        cout << "Процессор №" << i + 1 << ": ";
-        cout << processors[i].name << " " 
-             << processors[i].frequency << " " 
-             << processors[i].cores << endl;
-    }
+		processor.pop_front();
+	}
 
-    delete[] processors; // Освобождение памяти
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Создать стек целочисленных значений, для реализации 
@@ -115,55 +108,75 @@ int main() {
 содержимое стека еще раз. Найдите сумму элементов стека.*/
 
 #include <iostream>
-#include <vector> 
+#include <vector>
 
 using namespace std;
 
-int main() {
-    setlocale(LC_ALL, "Russian");
-    int x = 1, size = 0;
-    int* stack = nullptr; // Указатель на динамический массив (стек)
+vector<int>stack, dop_stack;
 
-    cout << "Вводите элементы стека: " << endl;
-
-    while (x != 0) {
-        cin >> x;
-        
-        // Расширение массива для нового элемента
-        int* temp = new int[size + 1]; 
-        for (int i = 0; i < size; i++) {
-            temp[i] = stack[i];
-        }
-        delete[] stack; // Освобождение старой памяти
-        stack = temp;
-
-        stack[size] = x; // Добавление элемента в стек
-        size++;
-    };
-
-    size--; // Уменьшаем размер,  так как последний введенный элемент - 0
-
-    cout << "Исходный стек: " << endl;
-    for (int i = size - 1; i >= 0; i--) {
-        cout << stack[i] << " ";
-    }
-
-    // Удаление 3 элементов с вершины стека
-    size -= 3;
-
-    int sum = 0;
-    cout << endl << "Обновлённый стек: " << endl;
-    for (int i = size - 1; i >= 0; i--) {
-        sum += stack[i];
-        cout << stack[i] << " ";
-    }
-
-    cout << endl << "Сумма элементов стека равна " << sum;
-
-    delete[] stack; // Освобождение памяти
-
-    return 0;
+void push(int el) {
+	stack.push_back(el);
 }
+
+void pop() {
+	stack.pop_back();
+}
+
+void dop_pop() {
+	dop_stack.pop_back();
+}
+
+void dop_push(int el) {
+	dop_stack.push_back(el);
+}
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	int x = 1;
+
+	cout << "Вводите элементы стека: " << endl;
+
+	int size = -1;
+
+	while (x != 0) {
+		cin >> x;
+		push(x);
+		size++;
+	};
+
+	pop();
+
+	cout << "Исходный стек: " << endl;
+
+	for (int i = 0; i < size; i++) {
+		cout << stack.back() << " ";
+		dop_push(stack.back());
+		pop();
+	}
+
+	for (int i = 0; i < size; i++) {
+		push(dop_stack.back());
+		dop_pop();
+	}
+
+	for (int i = 0; i < 3; i++) {
+		pop();
+	}
+
+	int sum = 0;
+	cout << endl << "Обновлённый стек: " << endl;
+
+	while (stack.size() != 0) {
+		sum += stack.back();
+		cout << stack.back() << " ";
+		pop();
+	}
+
+	cout << endl << "Сумма элементов стека равна " << sum;
+
+	return 0;
+}
+
 
 
 /*Создать очередь вещественных значений, для реализации 
@@ -178,67 +191,62 @@ int main() {
 
 using namespace std;
 
-int main() {
-    setlocale(LC_ALL, "Russian");
+deque<double>que;
 
-    double x = 1;
-    int size = 0;
-    double* queue = nullptr; // Указатель на динамический массив (очередь)
-
-    cout << "Вводите элементы очереди: " << endl;
-
-    while (x != 0) {
-        cin >> x;
-        if (x != 0) {
-            // Расширение массива для нового элемента
-            double* temp = new double[size + 1];
-            for (int i = 0; i < size; i++) {
-                temp[i] = queue[i];
-            }
-            delete[] queue; // Освобождение старой памяти
-            queue = temp;
-
-            queue[size] = x; // Добавление элемента в очередь
-            size++;
-        }
-    }
-
-    cout << "Исходная очередь: ";
-    for (int i = 0; i < size; i++) {
-        cout << queue[i] << " ";
-    }
-
-    // Удаление 2 элементов из начала очереди
-    for (int i = 0; i < size - 2; i++) {
-        queue[i] = queue[i + 2];
-    }
-    size -= 2;
-
-    // Добавление элемента 5.0 в конец очереди
-    double* temp = new double[size + 1];
-    for (int i = 0; i < size; i++) {
-        temp[i] = queue[i];
-    }
-    delete[] queue;
-    queue = temp;
-    queue[size] = 5.0;
-    size++;
-
-    cout << endl << "Обновлённая очередь: ";
-    double sum = 0.0;
-    for (int i = 0; i < size; i++) {
-        if (abs(queue[i]) > 12.0) {
-            sum += queue[i];
-        }
-        cout << queue[i] << " ";
-    }
-
-    cout << endl << "Сумма элементов очереди, по модулю больших 12, равна " << sum;
-
-    delete[] queue; // Освобождение памяти
-
-    return 0;
+void enqueue(double el) {
+	que.push_back(el);
 }
+
+void dequeue() {
+	que.pop_front();
+}
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	
+	double x = 1;
+
+	cout << "Вводите элементы очереди: " << endl;
+
+	while (x != 0) {
+		cin >> x;
+		if (x != 0) {
+			enqueue(x);
+		}
+	}
+
+	cout << "Исходная очередь: ";
+	
+	for (int i = 0; i < que.size(); i++) {
+		cout << que.front() << " ";
+		enqueue(que.front());
+		dequeue();
+	}
+
+	for (int i = 0; i < 2; i++) {
+		dequeue();
+	}
+
+	enqueue(5.0);
+	
+	cout << endl << "Обновлённая очередь: ";
+
+	double sum = 0.0;
+
+	for (int i = 0; i < que.size(); i++) {
+		if (abs(que.front()) > 12.0) {
+			sum += que.front();
+		}
+		cout << que.front() << " ";
+		enqueue(que.front());
+		dequeue();
+	}
+
+	cout << endl << "Сумма элементов очереди, по модулю больших 12, равна " << sum;
+	
+	return 0;
+}
+
 
 
 /*Дано число N (> 0) и две непустые очереди; адреса начала и конца 
@@ -255,94 +263,64 @@ int main() {
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
+	
+	deque<int>que_1, que_2;
 
-    int* queue1 = nullptr;
-    int* queue2 = nullptr;
-    int size1 = 0, size2 = 0;
-    int x = 1, N;
+	int x = 1, N;
 
-    cout << "Вводите элементы 1 очереди (0 для завершения): " << endl;
-    while (x != 0) {
-        cin >> x;
-        if (x != 0) {
-            int* temp = new int[size1 + 1];
-            for (int i = 0; i < size1; i++) {
-                temp[i] = queue1[i];
-            }
-            delete[] queue1;
-            queue1 = temp;
-            queue1[size1] = x;
-            size1++;
-        }
-    }
+	cout << "Вводите элементы 1 очереди: " << endl;
 
-    cout << "Вводите элементы 2 очереди (0 для завершения): " << endl;
-    while (x != 0) {
-        cin >> x;
-        if (x != 0) {
-            int* temp = new int[size2 + 1];
-            for (int i = 0; i < size2; i++) {
-                temp[i] = queue2[i];
-            }
-            delete[] queue2;
-            queue2 = temp;
-            queue2[size2] = x;
-            size2++;
-        }
-    }
+	while (x != 0) {
+		cin >> x;
+		if (x != 0) {
+			que_1.push_back(x);
+		}
+	}
 
-    cout << "Введите число N (> 0): ";
-    cin >> N;
+	x = 1;
 
-    // Перемещение элементов из queue1 в queue2
-    if (size1 < N) {
-        for (int i = 0; i < size1; i++) {
-            int* temp = new int[size2 + 1];
-            for (int j = 0; j < size2; j++) {
-                temp[j] = queue2[j];
-            }
-            delete[] queue2;
-            queue2 = temp;
-            queue2[size2] = queue1[i];
-            size2++;
-        }
-        delete[] queue1;
-        queue1 = nullptr;
-        size1 = 0;
-    } else {
-        for (int i = 0; i < N; i++) {
-            int* temp = new int[size2 + 1];
-            for (int j = 0; j < size2; j++) {
-                temp[j] = queue2[j];
-            }
-            delete[] queue2;
-            queue2 = temp;
-            queue2[size2] = queue1[i];
-            size2++;
-        }
-        for (int i = 0; i < size1 - N; i++) {
-            queue1[i] = queue1[i + N];
-        }
-        size1 -= N;
-    }
+	cout << "Вводите элементы 2 очереди: " << endl;
 
-    // Вывод информации об очередях
-    if (size1 == 0) {
-        cout << "Начало первой очереди: nil" << endl << "Конец первой очереди: nil" << endl;
-    } else {
-        cout << "Начало первой очереди: " << &queue1[0] << endl 
-             << "Конец первой очереди: " << &queue1[size1 - 1] << endl;
-    }
+	while (x != 0) {
+		cin >> x;
+		if (x != 0) {
+			que_2.push_back(x);
+		}
+	}
 
-    cout << "Начало второй очереди: " << &queue2[0] << endl 
-         << "Конец второй очереди: " << &queue2[size2 - 1];
+	cout << "Введите число N (> 0): ";
+	cin >> N;
+	
+	int* P1 = &que_1.front();
+	int* P2 = &que_1.back();
+	int* P3 = &que_2.front();
+	int* P4 = &que_2.back();
 
-    delete[] queue1;
-    delete[] queue2;
+	if (que_1.size() < N) {
+		while (!que_1.empty()) {
+			que_2.push_back(que_1.front());
+			que_1.pop_front();
+		}
+	}
+	else {
+		for (int i = 0; i < N; i++) {
+			que_2.push_back(que_1.front());
+			que_1.pop_front();
+		}
+	}
 
-    return 0;
+	if (que_1.empty()) {
+		cout << "Начало первой очереди: nil" << endl << "Конец первой очереди: nil" << endl;
+	}
+	else {
+		cout << "Начало первой очереди: " << P1 << endl << "Конец первой очереди: " << P2 << endl;
+	}
+	cout << "Начало второй очереди: " << P3 << endl << "Конец второй очереди: " << P4;
+
+	return 0;
 }
+
 
 
 /*Создать линейный однонаправленный список из вещественных 
@@ -355,56 +333,42 @@ int main() {
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
+	
+	vector <double> list;
 
-    double x = 1;
-    int size = 0;
-    double* list = nullptr; // Указатель на динамический массив (список)
+	double x = 1;
 
-    cout << "Вводите элементы списка (0 - конец списка): " << endl;
+	cout << "Вводите элементы списка (0 - конец списка): " << endl;
 
-    while (x != 0) {
-        cin >> x;
-        
-        // Расширение массива для нового элемента
-        double* temp = new double[size + 1];
-        for (int i = 0; i < size; i++) {
-            temp[i] = list[i];
-        }
-        delete[] list;
-        list = temp;
+	while (x != 0) {
+		cin >> x;
+		list.push_back(x);
+	}
 
-        list[size] = x;
-        size++;
-    }
+	list.pop_back();
 
-    size--; // Уменьшаем размер,  так как последний введенный элемент - 0
+	cout << "Исходный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << "Исходный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
+	for (int i = 0; i < list.size(); i++) {
+		if (list[i] > 0) {
+			auto iter = list.cbegin();
+			list.erase(iter + i + 1);
+			break;
+		}
+	}
 
-    // Удаление элемента после первого положительного
-    for (int i = 0; i < size; i++) {
-        if (list[i] > 0 && i < size - 1) { // Проверяем,  что i+1 не выходит за границы
-            for (int j = i + 1; j < size - 1; j++) {
-                list[j] = list[j + 1];
-            }
-            size--;
-            break;
-        }
-    }
+	cout << endl << "Преобразованный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << endl << "Преобразованный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
-
-    delete[] list; // Освобождение памяти
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Создать линейный однонаправленный список из целых чисел. 
@@ -417,53 +381,35 @@ int main() {
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
+	
+	vector <int> list;
+	int x = 1;
+	double sr, sum = 0.0;
 
-    vector<int> list;
-    int x = 1;
-    double sum = 0.0;
+	cout << "Вводите элементы списка (0 - конец списка): " << endl;
 
-    cout << "Введите количество элементов списка: ";
-    int count;
-    cin >> count;
+	while (x != 0) {
+		cin >> x;
+		list.push_back(x);
+	}
 
-    cout << "Вводите элементы списка:" << endl;
-    for (int i = 0; i < count; i++) {
-        cin >> x;
-        list.push_back(x);
-    }
+	list.pop_back();
 
-    cout << "Введите номера двух элементов, которые нужно исключить из расчета среднего арифметического (от 1 до " << count << "): ";
-    int excludeIndex1, excludeIndex2;
-    cin >> excludeIndex1 >> excludeIndex2;
+	cout << "Исходный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+		if (i != 1 && i != 2) {
+			sum += list[i];
+		}
+	}
 
-    // Проверка корректности введенных индексов
-    if (excludeIndex1 < 1 || excludeIndex1 > count || excludeIndex2 < 1 || excludeIndex2 > count || excludeIndex1 == excludeIndex2) {
-        cout << "Некорректные номера элементов." << endl;
-        return 1;
-    }
+	sr = sum / (list.size() - 2);
+	cout << endl << "Среднее арифметическое элементов списка (без 2 и 3 элементов) равно " << sr;
 
-    cout << "Исходный список: ";
-    for (int i = 0; i < list.size(); i++) {
-        cout << list[i] << " ";
-    }
-
-    // Подсчет суммы элементов,  исключая заданные
-    int elementsToExclude = 0;
-    for (int i = 0; i < list.size(); i++) {
-        if (i + 1 != excludeIndex1 && i + 1 != excludeIndex2) {
-            sum += list[i];
-        } else {
-            elementsToExclude++;
-        }
-    }
-
-    double average = sum / (list.size() - elementsToExclude);
-    cout << endl << "Среднее арифметическое элементов списка (без элементов №"
-         << excludeIndex1 << " и №" << excludeIndex2 << ") равно " << average;
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Создать линейный однонаправленный список из вещественных 
@@ -475,61 +421,42 @@ int main() {
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
 
-    double x = 1;
-    int size = 0;
-    double* list = nullptr; // Указатель на динамический массив (список)
-    double threshold; // Порог для удаления
+	vector <double> list;
 
-    cout << "Вводите элементы списка (0 - конец списка): " << endl;
+	double x = 1;
 
-    while (x != 0) {
-        cin >> x;
+	cout << "Вводите элементы списка (0 - конец списка): " << endl;
 
-        // Расширение массива для нового элемента
-        double* temp = new double[size + 1];
-        for (int i = 0; i < size; i++) {
-            temp[i] = list[i];
-        }
-        delete[] list;
-        list = temp;
+	while (x != 0) {
+		cin >> x;
+		list.push_back(x);
+	}
 
-        list[size] = x;
-        size++;
-    }
+	list.pop_back();
 
-    size--; // Уменьшаем размер,  так как последний введенный элемент - 0
+	cout << "Исходный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << "Введите пороговое значение для удаления: ";
-    cin >> threshold;
+	for (int i = 0; i < list.size(); i++) {
+		if (abs(list[i]) < 5) {
+			auto iter = list.cbegin();
+			list.erase(iter + i);
+			break;
+		}
+	}
 
-    cout << "Исходный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
+	cout << endl << "Преобразованный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    // Удаление первого элемента,  меньшего порога по модулю
-    for (int i = 0; i < size; i++) {
-        if (abs(list[i]) < threshold) {
-            // Сдвигаем элементы влево,  перезаписывая удаляемый
-            for (int j = i; j < size - 1; j++) {
-                list[j] = list[j + 1];
-            }
-            size--; 
-            break; // Выходим из цикла после удаления
-        }
-    }
-
-    cout << endl << "Преобразованный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
-
-    delete[] list; // Освобождение памяти
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Создать линейный однонаправленный список из вещественных 
@@ -537,76 +464,53 @@ int main() {
 меньше либо равными 15. Удалить из списка элементы, которые больше 25.*/
 
 #include <iostream>
-#include <vector> 
+#include <vector>
 
 using namespace std;
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
 
-    double x = 1, sum = 0, number = 0;
-    int size = 0;
-    double* list = nullptr; // Указатель на динамический массив (список)
-    double upperThreshold, lowerThreshold; // Пороги для вычисления среднего и удаления
+	vector <double> list;
 
-    cout << "Вводите элементы списка (0 - конец списка): " << endl;
+	double x = 1, sum = 0, number = 0;
 
-    while (x != 0) {
-        cin >> x;
+	cout << "Вводите элементы списка (0 - конец списка): " << endl;
 
-        // Расширение массива для нового элемента
-        double* temp = new double[size + 1];
-        for (int i = 0; i < size; i++) {
-            temp[i] = list[i];
-        }
-        delete[] list;
-        list = temp;
+	while (x != 0) {
+		cin >> x;
+		list.push_back(x);
+	}
 
-        list[size] = x;
-        size++;
-    }
+	list.pop_back();
 
-    size--; // Уменьшаем размер,  так как последний введенный элемент - 0
+	cout << "Исходный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << "Введите верхний порог для вычисления среднего арифметического: ";
-    cin >> upperThreshold;
-    cout << "Введите нижний порог для удаления элементов: ";
-    cin >> lowerThreshold;
+	for (int i = 0; i < list.size(); i++) {
+		if (list[i] <= 15) {
+			sum += list[i];
+			number++;
+		}
 
-    cout << "Исходный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
+		if (list[i] > 25) {
+			auto iter = list.cbegin();
+			list.erase(iter + i);
+		}
+	}
 
-    // Вычисление среднего арифметического и удаление элементов
-    for (int i = 0; i < size; i++) {
-        if (list[i] <= upperThreshold) {
-            sum += list[i];
-            number++;
-        }
+	cout << endl << "Среднее арифметическое элементов списка, меньших либо равных 15 равно: " << sum / number;
 
-        if (list[i] > lowerThreshold) {
-            // Сдвигаем элементы влево,  перезаписывая удаляемый
-            for (int j = i; j < size - 1; j++) {
-                list[j] = list[j + 1];
-            }
-            size--; 
-            i--; // Уменьшаем индекс,  так как элемент был удален
-        }
-    }
+	cout << endl << "Преобразованный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << endl << "Среднее арифметическое элементов списка, меньших либо равных " 
-         << upperThreshold << " равно: " << sum / number;
-
-    cout << endl << "Преобразованный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
-
-    delete[] list; // Освобождение памяти
-
-    return 0;
+	return 0;
 }
+
 
 
 /*Дан указатель P1 на начало односвязного линейного списка. 
@@ -621,43 +525,43 @@ int main() {
 
 using namespace std;
 
+vector <double> list;
+
+double Next(int i) {
+	return list[i++];
+}
+
+double Prev(int i) {
+	return list[i--];
+}
+
+
 int main() {
-    setlocale(LC_ALL, "Russian");
+	setlocale(LC_ALL, "Russian");
 
-    double x = 1;
-    int size = 0;
-    double* list = nullptr;
+	double x = 1;
 
-    cout << "Вводите элементы списка (0 - конец списка): " << endl;
+	cout << "Вводите элементы списка (0 - конец списка): " << endl;
 
-    while (x != 0) {
-        cin >> x;
-        
-        // Расширение массива
-        double* temp = new double[size + 1];
-        for (int i = 0; i < size; i++) {
-            temp[i] = list[i];
-        }
-        delete[] list;
-        list = temp;
+	while (x != 0) {
+		cin >> x;
+		list.push_back(x);
+	}
 
-        list[size] = x;
-        size++;
-    }
+	list.pop_back();
 
-    size--; // Уменьшение размера,  так как последний элемент - 0
 
-    cout << "Исходный список: ";
-    for (int i = 0; i < size; i++) {
-        cout << list[i] << " ";
-    }
+	cout << "Исходный список: ";
+	for (int i = 0; i < list.size(); i++) {
+		cout << list[i] << " ";
+	}
 
-    cout << endl << "Обратный список: ";
-    for (int i = size - 1; i >= 0; i--) {
-        cout << list[i] << " ";
-    }
+	cout << endl << "Обратный список: ";
 
-    delete[] list; // Освобождение памяти
-
-    return 0;
+	int i = list.size() - 1;
+	while (i != -1) {
+		cout << Prev(i) << " ";
+		i--;
+	}
+	return 0;
 }
