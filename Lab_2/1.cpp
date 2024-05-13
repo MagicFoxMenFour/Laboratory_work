@@ -475,3 +475,122 @@ int main() {
     
     return 0;
 }
+
+/*Создать бинарный файл с информацией о сотрудниках фирмы:
+− фамилия;
+− должность;
+− зарплата;
+− дата рождения.
+Вывести сведения о сотрудниках, у которых зарплата выше средней и
+возраст которых менее 30-ти лет.*/
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+// Структура для хранения данных о сотруднике
+struct Employee {
+    string surname;
+    string position;
+    double salary;
+    tm birthDate; // Используем структуру tm для хранения даты
+};
+
+// Функция для вычисления возраста
+int calculateAge(const tm& birthDate) {
+    time_t now = time(0);
+    tm* current = localtime(&now);
+
+    int age = current->tm_year - birthDate.tm_year;
+    if (current->tm_mon < birthDate.tm_mon || 
+        (current->tm_mon == birthDate.tm_mon && current->tm_mday < birthDate.tm_mday)) {
+        age--;
+    }
+    return age;
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    // Создание бинарного файла
+    ofstream file("employees.bin", ios::binary);
+
+    if (!file) {
+        cerr << "Ошибка открытия файла!" << endl;
+        return 1;
+    }
+
+    // Ввод данных о сотрудниках
+    int numEmployees;
+    cout << "Введите количество сотрудников: ";
+    cin >> numEmployees;
+
+    for (int i = 0; i < numEmployees; i++) {
+        Employee employee;
+        cout << "Введите данные сотрудника " << i + 1 << ":" << endl;
+        cout << "  Фамилия: ";
+        cin >> employee.surname;
+        cout << "  Должность: ";
+        cin >> employee.position;
+        cout << "  Зарплата: ";
+        cin >> employee.salary;
+
+        // Ввод даты рождения
+        cout << "  Дата рождения (дд мм гггг): ";
+        cin >> employee.birthDate.tm_mday >> employee.birthDate.tm_mon >> employee.birthDate.tm_year;
+        employee.birthDate.tm_mon--; // Месяцы в tm нумеруются от 0
+        employee.birthDate.tm_year -= 1900; // Год отсчитывается от 1900
+
+        // Запись данных сотрудника в файл
+        file.write((char*)&employee, sizeof(Employee));
+    }
+
+    file.close();
+
+    // Открытие файла для чтения
+    ifstream inputFile("employees.bin", ios::binary);
+
+    if (!inputFile) {
+        cerr << "Ошибка открытия файла!" << endl;
+        return 1;
+    }
+
+    // Вычисление средней зарплаты
+    double totalSalary = 0;
+    inputFile.seekg(0, ios::end); // Перемещаем указатель в конец файла
+    int fileSize = inputFile.tellg(); // Получаем размер файла в байтах
+    int employeeCount = fileSize / sizeof(Employee); // Вычисляем количество сотрудников
+    inputFile.seekg(0, ios::beg); // Перемещаем указатель в начало файла
+
+    for (int i = 0; i < employeeCount; i++) {
+        Employee employee;
+        inputFile.read((char*)&employee, sizeof(Employee));
+        totalSalary += employee.salary;
+    }
+
+    double averageSalary = totalSalary / employeeCount;
+
+    // Вывод сведений о сотрудниках с зарплатой выше средней и возрастом менее 30
+    cout << "\nСотрудники с зарплатой выше средней и возрастом менее 30 лет:" << endl;
+    inputFile.seekg(0, ios::beg); // Перемещаем указатель в начало файла
+    for (int i = 0; i < employeeCount; i++) {
+        Employee employee;
+        inputFile.read((char*)&employee, sizeof(Employee));
+        int age = calculateAge(employee.birthDate);
+        if (employee.salary > averageSalary && age < 30) {
+            cout << "  Фамилия: " << employee.surname << endl;
+            cout << "  Должность: " << employee.position << endl;
+            cout << "  Зарплата: " << employee.salary << endl;
+            cout << "  Дата рождения: " << employee.birthDate.tm_mday << "." 
+                 << employee.birthDate.tm_mon + 1 << "." 
+                 << employee.birthDate.tm_year + 1900 << endl;
+            cout << "  Возраст: " << age << endl << endl;
+        }
+    }
+
+    inputFile.close();
+
+    return 0;
+}
